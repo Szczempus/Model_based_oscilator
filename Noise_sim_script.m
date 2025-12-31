@@ -1,0 +1,48 @@
+f0 = 50e6;
+
+fs_noise = 500e3;
+Ts_noise = 1/fs_noise;
+
+f_noise_min = 1;
+f_noise_max = 100e3;
+
+Tsim_noise = 10;
+
+f_pn = [1 10 100 1e3 10e3 100e3];
+L_pn = [-55 -83 -108 -130 -148 -155];
+
+H_pn = 10.^(L_pn/20);
+
+pn_filter_b = 1;
+
+%var(out.white_noise)
+
+%[Pxx,f] = pwelch(out.white_noise, [], [], [], fs_noise, 'onesided');
+
+%figure;
+%semilogx(f,10*log10(Pxx));
+%grid on;
+%xlabel('Frequency offset [Hz]');
+%ylabel('PSD [dB/Hz]');
+%title('Band-Limited White Noise PSD');
+
+h_0 = 5.748270274700225e-16;
+
+K_WPM = sqrt(h_0/2);
+
+phi = out.phi_WPM(:);
+
+[Pxx,f] = pwelch(phi, ...
+    hamming(65536), ...
+    32768, ...
+    65536, ...
+    fs_noise, ...
+    'onesided');
+
+figure;
+semilogx(f,10*log10(Pxx/2));
+grid on;
+
+xlabel('Offset frequency [Hz]');
+ylabel('SSB Phase Noise L(f) [dBc/Hz]');
+title('White PM branch');
